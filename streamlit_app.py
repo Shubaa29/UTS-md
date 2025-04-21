@@ -71,7 +71,7 @@ if submit:
     }
 
     processed = preprocess_input(user_input)
-    prediction = model.predict(processed)[0]
+    prediction = model.predict(np.array(processed))[0]
     result = "✅ Disetujui" if prediction == 1 else "❌ Ditolak"
     st.success(f"Hasil Prediksi: {result}")
 
