@@ -1,5 +1,117 @@
-streamlit
-scikit-learn
-pandas
-numpy
-xgboost
+import streamlit as st
+import pickle
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+import os
+
+# Nama file model
+MODEL_PATH = "best_model.pkl"
+
+# Cek keberadaan file model
+if not os.path.exists(MODEL_PATH):
+    st.error(
+        f"⚠️ File '{MODEL_PATH}' tidak ditemukan. "
+        "Pastikan file ini di-upload ke GitHub sejajar dengan streamlit_app.py."
+    )
+    st.stop()
+
+# Load model dengan penanganan exception
+try:
+    with open(MODEL_PATH, "rb") as f:
+        model = pickle.load(f)
+except Exception as e:
+    st.error(f"❌ Gagal memuat model. Error detail: {e}")
+    st.stop()
+
+# Placeholder scaler (seharusnya load scaler yang sama dengan training)
+scaler = StandardScaler()
+
+# Fungsi preprocessing input user
+def preprocess_input(user_input: dict):
+    df = pd.DataFrame([user_input])
+
+    # One-hot encoding
+    df = pd.get_dummies(df)
+
+    # Daftar kolom yang diharapkan model
+    expected_columns = [
+        'person_age', 'person_income', 'person_emp_exp', 'loan_amnt', 'loan_int_rate',
+        'loan_percent_income', 'cb_person_cred_hist_length', 'credit_score',
+        'person_gender_male', 'person_education_High School', 'person_education_Master',
+        'person_home_ownership_OWN', 'person_home_ownership_RENT',
+        'loan_intent_EDUCATION', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL',
+        'loan_intent_VENTURE', 'previous_loan_defaults_on_file_Yes'
+    ]
+
+    # Tambahkan kolom yang hilang dan isi dengan 0
+    for col in expected_columns:
+        if col not in df.columns:
+            df[col] = 0
+    df = df[expected_columns]
+
+    # Scaling data
+    return scaler.fit_transform(df)
+
+# UI Streamlit
+st.title("Loan Approval Prediction App")
+st.write("Masukkan detail pemohon untuk memprediksi persetujuan pinjaman.")
+
+with st.form("loan_form"):
+    age = st.number_input("Usia", min_value=18, max_value=100, value=30)
+    gender = st.selectbox("Jenis Kelamin", ["male", "female"])
+    education = st.selectbox("Pendidikan", ["Bachelor", "High School", "Master"])
+    income = st.number_input("Pendapatan", min_value=1000, max_value=1000000, value=50000)
+    emp_exp = st.number_input("Lama Kerja (tahun)", min_value=0, max_value=50, value=5)
+    ownership = st.selectbox("Status Tempat Tinggal", ["RENT", "OWN", "MORTGAGE"])
+    loan_amt = st.number_input("Jumlah Pinjaman", min_value=1000, max_value=50000, value=15000)
+    intent = st.selectbox(
+        "Tujuan Pinjaman", 
+        ["EDUCATION", "MEDICAL", "PERSONAL", "VENTURE", "DEBTCONSOLIDATION", "HOMEIMPROVEMENT"]
+    )
+    int_rate = st.slider("Bunga Pinjaman (%)", min_value=0.0, max_value=30.0, value=12.5)
+    percent_income = st.slider("Pinjaman vs Pendapatan", min_value=0.0, max_value=1.0, value=0.3)
+    cred_hist = st.number_input("Riwayat Kredit (tahun)", min_value=0, max_value=50, value=4)
+    score = st.number_input("Skor Kredit", min_value=300, max_value=850, value=650)
+    prev_default = st.selectbox("Pernah Menunggak Sebelumnya?", ["No", "Yes"])
+    submit = st.form_submit_button("Prediksi")
+
+if submit:
+    user_input = {
+        'person_age': age,
+        'person_gender': gender,
+        'person_education': education,
+        'person_income': income,
+        'person_emp_exp': emp_exp,
+        'person_home_ownership': ownership,
+        'loan_amnt': loan_amt,
+        'loan_intent': intent,
+        'loan_int_rate': int_rate,
+        'loan_percent_income': percent_income,
+        'cb_person_cred_hist_length': cred_hist,
+        'credit_score': score,
+        'previous_loan_defaults_on_file': prev_default
+    }
+    X_input = preprocess_input(user_input)
+    prediction = model.predict(X_input)[0]
+    label = "Disetujui" if prediction == 1 else "Ditolak"
+    st.success(f"Hasil Prediksi: **{label}**")
+
+# Contoh Test Case
+st.markdown("---")
+st.subheader("Contoh Test Case")
+st.markdown(
+    """
+**Case 1:**
+- Usia: 35, Gender: male, Pendidikan: Bachelor
+- Pendapatan: 80000, Lama Kerja: 8 tahun, Status Rumah: OWN
+- Pinjaman: 20000 (PERSONAL), Bunga: 10%, Pinjaman vs Pendapatan: 0.25
+- Riwayat Kredit: 6 tahun, Skor Kredit: 720, Default sebelumnya: No
+
+**Case 2:**
+- Usia: 24, Gender: female, Pendidikan: High School
+- Pendapatan: 30000, Lama Kerja: 2 tahun, Status Rumah: RENT
+- Pinjaman: 15000 (VENTURE), Bunga: 20%, Pinjaman vs Pendapatan: 0.5
+- Riwayat Kredit: 2 tahun, Skor Kredit: 580, Default sebelumnya: Yes
+    """
+)
+
