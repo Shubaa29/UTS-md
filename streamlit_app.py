@@ -8,7 +8,7 @@ import os
 # Path ke model
 MODEL_PATH = "best_model.pkl"
 # Cek keberadaan file model sebelum loading
-i
+
 if not os.path.exists(MODEL_PATH):
     st.error(f"⚠️ File '{MODEL_PATH}' tidak ditemukan. Pastikan file ini di-upload ke GitHub sejajar dengan streamlit_app.py.")
     st.stop()
