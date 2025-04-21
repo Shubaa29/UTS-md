@@ -1,4 +1,7 @@
 import pickle
 
+# Asumsikan ini adalah model XGBoost terbaik yang kamu latih sebelumnya
 with open("best_model.pkl", "wb") as file:
     pickle.dump(model_xgb, file)
+
+print("Model XGBoost terbaik berhasil disimpan sebagai best_model.pkl")
