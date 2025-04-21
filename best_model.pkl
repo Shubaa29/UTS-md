@@ -1,4 +1,4 @@
 import pickle
 
 with open("best_model.pkl", "wb") as file:
-    pickle.dump(model_terbaik, file)
+    pickle.dump(model_xgb, file)
