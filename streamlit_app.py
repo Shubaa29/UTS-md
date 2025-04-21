@@ -2,20 +2,20 @@ import streamlit as st
 import pickle
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
 
-# Load trained model
+# Load trained model dan scaler
 with open("best_model.pkl", "rb") as file:
     model = pickle.load(file)
 
+with open("scaler.pkl", "rb") as f:
+    scaler, expected_columns = pickle.load(f)
+
+# Preprocessing input user
 def preprocess_input(user_input):
     df = pd.DataFrame([user_input])
     df = pd.get_dummies(df)
 
-    # Load scaler dan expected_columns
-    with open("scaler.pkl", "rb") as f:
-        scaler, expected_columns = pickle.load(f)
-
+    # Tambah kolom yang hilang agar sesuai dengan kolom training
     for col in expected_columns:
         if col not in df.columns:
             df[col] = 0
@@ -23,7 +23,6 @@ def preprocess_input(user_input):
     df = df[expected_columns]
     scaled = scaler.transform(df)
     return scaled
-
 
 # Streamlit UI
 st.title("Aplikasi Prediksi Persetujuan Pinjaman")
@@ -43,7 +42,7 @@ with st.form("form_input"):
     cred_len = st.number_input("Lama Riwayat Kredit (tahun)", 0, 20, 4)
     score = st.number_input("Skor Kredit", 300, 850, 650)
     default = st.selectbox("Pernah Menunggak?", ["No", "Yes"])
-    
+
     submit = st.form_submit_button("Prediksi")
 
 if submit:
@@ -64,7 +63,7 @@ if submit:
     }
 
     processed = preprocess_input(user_input)
-    prediction = model.predict(processed)[0]
+    prediction = model.predict(np.array(processed))[0]
     result = "✅ Disetujui" if prediction == 1 else "❌ Ditolak"
     st.success(f"Hasil Prediksi: {result}")
 
