@@ -11,7 +11,7 @@ with open("best_model.pkl", "rb") as file:
 def preprocess_input(user_input):
     df = pd.DataFrame([user_input])
     df = pd.get_dummies(df)
-
+    
     expected_columns = ['person_age', 'person_income', 'person_emp_exp',
                         'loan_amnt', 'loan_int_rate', 'loan_percent_income',
                         'cb_person_cred_hist_length', 'credit_score',
@@ -24,10 +24,16 @@ def preprocess_input(user_input):
     for col in expected_columns:
         if col not in df.columns:
             df[col] = 0
-    df = df[expected_columns]
     
-    scaled = scaler.transform(df)  
+    df = df[expected_columns]
+
+    # 🛠️ Load scaler dari file
+    with open("scaler.pkl", "rb") as f:
+        scaler = pickle.load(f)
+
+    scaled = scaler.transform(df)
     return scaled
+
 
 # Streamlit UI
 st.title("Aplikasi Prediksi Persetujuan Pinjaman")
