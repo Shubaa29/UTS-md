@@ -73,10 +73,10 @@ if submit:
     result = model.predict(X_input)[0]
     st.success("Hasil Prediksi: **Disetujui**" if result == 1 else "Hasil Prediksi: **Ditolak**")
 
-  model_filename = 'best_model.pkl'
-  model = load_model(model_filename)
-  prediction = predict_with_model(model, user_input)
-  st.write('The prediction output is: ', prediction)
+model_filename = 'best_model.pkl'
+model = load_model(model_filename)
+prediction = predict_with_model(model, user_input)
+st.write('The prediction output is: ', prediction)
 
 if __name__ == "__main__":
   main()
