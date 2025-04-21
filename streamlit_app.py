@@ -7,8 +7,8 @@ import os
 
 # Path ke model
 MODEL_PATH = "best_model.pkl"
-# Cek keberadaan file model sebelum loading
 
+# Cek keberadaan file model sebelum loading
 if not os.path.exists(MODEL_PATH):
     st.error(f"⚠️ File '{MODEL_PATH}' tidak ditemukan. Pastikan file ini di-upload ke GitHub sejajar dengan streamlit_app.py.")
     st.stop()
@@ -18,17 +18,18 @@ try:
     with open(MODEL_PATH, "rb") as file:
         model = pickle.load(file)
 except Exception as e:
-    st.error(f"❌ Gagal memuat model: {e}")
+    st.error(f"❌ Gagal memuat model. Pastikan 'best_model.pkl' adalah hasil pickle model XGBoost.
+Error detail: {e}")
     st.stop()
 
-# Inisialisasi scaler (hanya placeholder, sebaiknya load scaler nyata dari training)
+# Inisialisasi scaler (placeholder: gunakan scaler yang sama seperti di training)
 scaler = StandardScaler()
 
 def preprocess_input(user_input):
     df = pd.DataFrame([user_input])
     # Dummy encoding
     df = pd.get_dummies(df)
-    # Kolom yang diharapkan model
+    # Daftar kolom yang diharapkan oleh model
     expected_columns = [
         'person_age', 'person_income', 'person_emp_exp', 'loan_amnt', 'loan_int_rate',
         'loan_percent_income', 'cb_person_cred_hist_length', 'credit_score',
@@ -41,15 +42,13 @@ def preprocess_input(user_input):
         if col not in df:
             df[col] = 0
     df = df[expected_columns]
-    # Skala data
+    # Scaling data input
     return scaler.fit_transform(df)
 
-# Judul aplikasi
-title = "Loan Approval Prediction App"
-st.title(title)
+# UI Streamlit
+st.title("Loan Approval Prediction App")
 st.write("Masukkan detail pemohon di bawah ini untuk memprediksi persetujuan pinjaman.")
 
-# Form input user
 with st.form("loan_form"):
     age = st.number_input("Usia", 18, 100, 30)
     gender = st.selectbox("Jenis Kelamin", ["male", "female"])
@@ -90,7 +89,7 @@ if submit:
 st.markdown("---")
 st.subheader("Contoh Test Case")
 st.markdown(
-"""
+    """
 **Case 1:**
 - Usia: 35
 - Gender: male
@@ -120,5 +119,5 @@ st.markdown(
 - Riwayat kredit: 2 tahun
 - Skor kredit: 580
 - Default sebelumnya: Yes
-"""
+    """
 )
