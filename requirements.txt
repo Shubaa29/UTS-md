@@ -2,7 +2,4 @@ streamlit
 scikit-learn
 pandas
 numpy
-git add requirements.txt
-git commit -m "Add xgboost to dependencies"
-git push
-
+xgboost
