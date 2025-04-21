@@ -11,26 +11,16 @@ with open("best_model.pkl", "rb") as file:
 def preprocess_input(user_input):
     df = pd.DataFrame([user_input])
     df = pd.get_dummies(df)
-    
-    expected_columns = ['person_age', 'person_income', 'person_emp_exp',
-                        'loan_amnt', 'loan_int_rate', 'loan_percent_income',
-                        'cb_person_cred_hist_length', 'credit_score',
-                        'person_gender_male', 'person_education_High School',
-                        'person_education_Master', 'person_home_ownership_OWN',
-                        'person_home_ownership_RENT', 'loan_intent_EDUCATION',
-                        'loan_intent_MEDICAL', 'loan_intent_PERSONAL',
-                        'loan_intent_VENTURE', 'previous_loan_defaults_on_file_Yes']
-    
+
+    # Load scaler dan expected_columns
+    with open("scaler.pkl", "rb") as f:
+        scaler, expected_columns = pickle.load(f)
+
     for col in expected_columns:
         if col not in df.columns:
             df[col] = 0
-    
+
     df = df[expected_columns]
-
-    # 🛠️ Load scaler dari file
-    with open("scaler.pkl", "rb") as f:
-        scaler = pickle.load(f)
-
     scaled = scaler.transform(df)
     return scaled
 
