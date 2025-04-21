@@ -51,6 +51,8 @@ with st.form("loan_form"):
     prev_default = st.selectbox("Pernah Menunggak Sebelumnya?", ["No", "Yes"])
     submit = st.form_submit_button("Prediksi")
 
+
+
 if submit:
     user_input = {
         'person_age': age,
@@ -67,7 +69,13 @@ if submit:
         'credit_score': score,
         'previous_loan_defaults_on_file': prev_default
     }
+  model_filename = 'best_model.pkl'
+  model = load_model(model_filename)
+  prediction = predict_with_model(model, user_input)
+  st.write('The prediction output is: ', prediction)
 
+if __name__ == "__main__":
+  main()
     X_input = preprocess_input(user_input)
     result = model.predict(X_input)[0]
     st.success("Hasil Prediksi: **Disetujui**" if result == 1 else "Hasil Prediksi: **Ditolak**")
