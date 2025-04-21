@@ -10,7 +10,10 @@ MODEL_PATH = "best_model.pkl"
 
 # Cek keberadaan file model sebelum loading
 if not os.path.exists(MODEL_PATH):
-    st.error(f"⚠️ File '{MODEL_PATH}' tidak ditemukan. Pastikan file ini di-upload ke GitHub sejajar dengan streamlit_app.py.")
+    st.error(
+        f"⚠️ File '{MODEL_PATH}' tidak ditemukan. "
+        "Pastikan file ini di-upload ke GitHub sejajar dengan streamlit_app.py."
+    )
     st.stop()
 
 # Load trained model dengan penanganan error
@@ -18,8 +21,10 @@ try:
     with open(MODEL_PATH, "rb") as file:
         model = pickle.load(file)
 except Exception as e:
-    st.error(f"❌ Gagal memuat model. Pastikan 'best_model.pkl' adalah hasil pickle model XGBoost.
-Error detail: {e}")
+    st.error(
+        f"❌ Gagal memuat model. Pastikan 'best_model.pkl' adalah hasil pickle model XGBoost."  
+        f"\nError detail: {e}"
+    )
     st.stop()
 
 # Inisialisasi scaler (placeholder: gunakan scaler yang sama seperti di training)
