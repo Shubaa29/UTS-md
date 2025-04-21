@@ -3,38 +3,53 @@ import pickle
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
+import os
 
-# Load trained model
-with open("best_model.pkl", "rb") as file:
-    model = pickle.load(file)
+# Path ke model
+MODEL_PATH = "best_model.pkl"
+# Cek keberadaan file model sebelum loading
+i
+if not os.path.exists(MODEL_PATH):
+    st.error(f"⚠️ File '{MODEL_PATH}' tidak ditemukan. Pastikan file ini di-upload ke GitHub sejajar dengan streamlit_app.py.")
+    st.stop()
 
+# Load trained model dengan penanganan error
+try:
+    with open(MODEL_PATH, "rb") as file:
+        model = pickle.load(file)
+except Exception as e:
+    st.error(f"❌ Gagal memuat model: {e}")
+    st.stop()
+
+# Inisialisasi scaler (hanya placeholder, sebaiknya load scaler nyata dari training)
 scaler = StandardScaler()
 
 def preprocess_input(user_input):
     df = pd.DataFrame([user_input])
-
-    categorical_cols = ['person_gender', 'person_education', 'person_home_ownership',
-                        'loan_intent', 'previous_loan_defaults_on_file']
+    # Dummy encoding
     df = pd.get_dummies(df)
-
-    expected_columns = ['person_age', 'person_income', 'person_emp_exp', 'loan_amnt', 'loan_int_rate',
-                        'loan_percent_income', 'cb_person_cred_hist_length', 'credit_score',
-                        'person_gender_male', 'person_education_High School', 'person_education_Master',
-                        'person_home_ownership_OWN', 'person_home_ownership_RENT',
-                        'loan_intent_EDUCATION', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL',
-                        'loan_intent_VENTURE', 'previous_loan_defaults_on_file_Yes']
-
+    # Kolom yang diharapkan model
+    expected_columns = [
+        'person_age', 'person_income', 'person_emp_exp', 'loan_amnt', 'loan_int_rate',
+        'loan_percent_income', 'cb_person_cred_hist_length', 'credit_score',
+        'person_gender_male', 'person_education_High School', 'person_education_Master',
+        'person_home_ownership_OWN', 'person_home_ownership_RENT',
+        'loan_intent_EDUCATION', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL',
+        'loan_intent_VENTURE', 'previous_loan_defaults_on_file_Yes'
+    ]
     for col in expected_columns:
         if col not in df:
             df[col] = 0
     df = df[expected_columns]
+    # Skala data
+    return scaler.fit_transform(df)
 
-    scaled = scaler.fit_transform(df)
-    return scaled
-
-st.title("Loan Approval Prediction App")
+# Judul aplikasi
+title = "Loan Approval Prediction App"
+st.title(title)
 st.write("Masukkan detail pemohon di bawah ini untuk memprediksi persetujuan pinjaman.")
 
+# Form input user
 with st.form("loan_form"):
     age = st.number_input("Usia", 18, 100, 30)
     gender = st.selectbox("Jenis Kelamin", ["male", "female"])
@@ -50,8 +65,6 @@ with st.form("loan_form"):
     score = st.number_input("Skor Kredit", 300, 850, 650)
     prev_default = st.selectbox("Pernah Menunggak Sebelumnya?", ["No", "Yes"])
     submit = st.form_submit_button("Prediksi")
-
-
 
 if submit:
     user_input = {
@@ -73,18 +86,11 @@ if submit:
     result = model.predict(X_input)[0]
     st.success("Hasil Prediksi: **Disetujui**" if result == 1 else "Hasil Prediksi: **Ditolak**")
 
-model_filename = 'best_model.pkl'
-model = load_model(model_filename)
-prediction = predict_with_model(model, user_input)
-st.write('The prediction output is: ', prediction)
-
-if __name__ == "__main__":
-  main()
-
-# Contoh Test Case (ditampilkan di bawah tombol prediksi)
+# Contoh Test Case
 st.markdown("---")
 st.subheader("Contoh Test Case")
-st.markdown("""
+st.markdown(
+"""
 **Case 1:**
 - Usia: 35
 - Gender: male
@@ -114,5 +120,5 @@ st.markdown("""
 - Riwayat kredit: 2 tahun
 - Skor kredit: 580
 - Default sebelumnya: Yes
-""")
-
+"""
+)
