@@ -69,6 +69,10 @@ if submit:
         'credit_score': score,
         'previous_loan_defaults_on_file': prev_default
     }
+    X_input = preprocess_input(user_input)
+    result = model.predict(X_input)[0]
+    st.success("Hasil Prediksi: **Disetujui**" if result == 1 else "Hasil Prediksi: **Ditolak**")
+
   model_filename = 'best_model.pkl'
   model = load_model(model_filename)
   prediction = predict_with_model(model, user_input)
@@ -76,9 +80,6 @@ if submit:
 
 if __name__ == "__main__":
   main()
-    X_input = preprocess_input(user_input)
-    result = model.predict(X_input)[0]
-    st.success("Hasil Prediksi: **Disetujui**" if result == 1 else "Hasil Prediksi: **Ditolak**")
 
 # Contoh Test Case (ditampilkan di bawah tombol prediksi)
 st.markdown("---")
