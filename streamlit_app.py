@@ -79,10 +79,10 @@ st.markdown("""
 - Pendapatan: 80000  
 - Lama kerja: 5 tahun  
 - Status rumah: OWN  
-- Jumlah pinjaman: 15000  
+- Jumlah pinjaman: 24000  
 - Tujuan: PERSONAL  
-- Bunga: 10%  
-- Rasio pendapatan: 0.25  
+- Bunga: 12%  
+- Rasio pendapatan: 0.3  
 - Lama kredit: 4 tahun  
 - Skor kredit: 650  
 - Pernah menunggak: No  
