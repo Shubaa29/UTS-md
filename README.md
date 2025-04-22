@@ -24,3 +24,10 @@ Rasio Pinjaman terhadap Pendapatan
 Lama Riwayat Kredit
 Skor Kredit
 Riwayat Tunggakan
+
+
+
+👨‍💻 Author
+
+Georgius Benedict Sungkharisma_27023730303
+UTS Model Deployment - 2025
