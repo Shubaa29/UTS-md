@@ -77,14 +77,14 @@ st.markdown("""
 - Gender: male  
 - Pendidikan: Bachelor  
 - Pendapatan: 80000  
-- Lama kerja: 8 tahun  
+- Lama kerja: 5 tahun  
 - Status rumah: OWN  
-- Jumlah pinjaman: 20000  
+- Jumlah pinjaman: 15000  
 - Tujuan: PERSONAL  
 - Bunga: 10%  
 - Rasio pendapatan: 0.25  
-- Lama kredit: 6 tahun  
-- Skor kredit: 720  
+- Lama kredit: 4 tahun  
+- Skor kredit: 650  
 - Pernah menunggak: No  
 
 **Case 2:**
