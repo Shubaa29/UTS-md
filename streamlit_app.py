@@ -78,7 +78,7 @@ st.markdown("""
 - Pendidikan: Bachelor  
 - Pendapatan: 80000  
 - Lama kerja: 5 tahun  
-- Status rumah: OWN  
+- Status rumah: RENT  
 - Jumlah pinjaman: 24000  
 - Tujuan: PERSONAL  
 - Bunga: 12%  
