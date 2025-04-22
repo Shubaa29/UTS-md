@@ -1,6 +1,7 @@
 # UTS MD
 
 🎯 Aplikasi Prediksi Persetujuan Pinjaman
+
 Ini adalah aplikasi Streamlit yang digunakan untuk memprediksi apakah pengajuan pinjaman seseorang akan disetujui atau ditolak menggunakan model machine learning berbasis XGBoost.
 
 🔍 Deskripsi Proyek
